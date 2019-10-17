@@ -9,6 +9,7 @@ import socket
 import struct
 import textwrap
 import time
+from threading import Thread
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -63,6 +64,11 @@ def generateReport():
     else:
         messagebox.showerror("Error", "Please create connection first!")
 
+
+def threaded_run():
+    t = Thread(target=startCapture)
+    t.daemon = True
+    t.start()
 
 def stopCapture():
     global captureTracker
@@ -135,7 +141,6 @@ def startCapture():
         else:
             print('Ethernet Data:')
             print(format_output_line(DATA_TAB_1, data))
-
 
 
 # Unpack Ethernet Frame
@@ -220,13 +225,10 @@ connectionCreation = Button(topFrame, text="Create Connection", image=connection
 connectionCreation.pack(side=LEFT)
 
 startphoto = PhotoImage(file="start.png")
-captureStart = Button(topFrame, text="Start", image=startphoto, compound=LEFT, fg="#3c6160", command=startCapture)
+captureStart = Button(topFrame, text="Start", image=startphoto, compound=LEFT, fg="#3c6160", command=threaded_run)
 captureStart.pack(side=LEFT)
 
 stopPhoto = PhotoImage(file="finish.png")
-
-
-
 
 captureStop = Button(topFrame, text="Stop", image=stopPhoto, compound=LEFT, fg="#3c6160", command=stopCapture)
 captureStop.pack(side=LEFT)
