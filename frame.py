@@ -10,6 +10,7 @@ import struct
 import textwrap
 import time
 from threading import Thread
+from tkinter import filedialog
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -39,12 +40,19 @@ def detectInterface():
 
 def savePacket():
     if tracker == TRUE:
+        filename = filedialog.asksaveasfilename(initialdir="/home/ssnmt", title="Select file",
+                                                filetypes=(("pdf files", "*.pdf"), ("all files", "*.*")))
+        if filename:
+            filename = filename
+        else:
+            messagebox.showerror("Error", "Select File Name First! ")
+
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font('Times', 'B', 16)
         pdf.cell(80)
         pdf.cell(40, 10, 'Captured Packet Information', 1, 0, 'C')
-        pdf.output('packet.pdf', 'F')
+        pdf.output(filename, 'F')
         print("Packet saved!!!!!!!!!!")
         messagebox.showinfo("Store Capture Packet", "saved!!!!!")
     else:
@@ -53,12 +61,18 @@ def savePacket():
 
 def generateReport():
     if tracker == TRUE:
+        filename = filedialog.asksaveasfilename(initialdir="/home/ssnmt", title="Select file",
+                                                filetypes=(("pdf files", "*.pdf"), ("all files", "*.*")))
+        if filename:
+            filename = filename
+        else:
+            messagebox.showerror("Error", "Select File Name First! ")
         pdf = FPDF()
         pdf.add_page()
         pdf.image('iit1.png', 10, 8, 33)
         pdf.set_font('Arial', 'B', 15)
         pdf.cell(200, 10, txt="Capture Packet Information", ln=1, align="C")
-        pdf.output('report.pdf', 'F')
+        pdf.output(filename, 'F')
         print("Report generated!!!!!!!!!!")
         messagebox.showinfo("Report", "Report generated successfully")
     else:
@@ -69,6 +83,7 @@ def threaded_run():
     t = Thread(target=startCapture)
     t.daemon = True
     t.start()
+
 
 def stopCapture():
     global captureTracker
