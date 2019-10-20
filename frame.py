@@ -12,6 +12,7 @@ import time
 from threading import Thread
 from tkinter import filedialog
 
+
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
 TAB_3 = '\t\t\t - '
@@ -23,7 +24,7 @@ DATA_TAB_3 = '\t\t\t   '
 DATA_TAB_4 = '\t\t\t\t   '
 
 root = Tk()
-root.title('Packet Capturing Tool')
+root.title('')
 root.geometry('800x500')
 
 tracker = FALSE
@@ -224,15 +225,17 @@ def format_output_line(prefix, string, size=80):
             return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
 
 
-toplabel = Label(root, text="Packet Capturing Tool", bg="#4a6966", fg="white")
-toplabel.config(font=("Times", 25))
+toplabel = Label(root, text="Packet Capturing Tool- software project lab3", bg="#00001a", fg="white")
+toplabel.config(font=("Times", 14))
 toplabel.pack(fill=X)
 
-topFrame = Frame(root, bg="#47965c")
+
+topFrame = Frame(root)
 topFrame.pack()
 
+
 bottomFrame = Frame(root)
-bottomFrame.pack(side=BOTTOM)
+bottomFrame.pack(side=LEFT)
 
 connectionPhoto = PhotoImage(file="connection.png")
 connectionCreation = Button(topFrame, text="Create Connection", image=connectionPhoto, compound=LEFT, fg="#3c6160",
@@ -244,7 +247,6 @@ captureStart = Button(topFrame, text="Start", image=startphoto, compound=LEFT, f
 captureStart.pack(side=LEFT)
 
 stopPhoto = PhotoImage(file="finish.png")
-
 captureStop = Button(topFrame, text="Stop", image=stopPhoto, compound=LEFT, fg="#3c6160", command=stopCapture)
 captureStop.pack(side=LEFT)
 
@@ -267,5 +269,6 @@ aboutButton.pack(side=LEFT)
 exitPhoto = PhotoImage(file="exit.png")
 exitButton = Button(topFrame, text="Exit", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
 exitButton.pack(side=LEFT)
+
 
 root.mainloop()
