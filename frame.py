@@ -2,6 +2,7 @@ from email.policy import HTTP
 import asyncio
 from tkinter import *
 from tkinter import messagebox
+from tkinter.messagebox import showinfo
 from tkinter.ttk import Progressbar
 import fpdf
 from fpdf import FPDF
@@ -11,7 +12,9 @@ import textwrap
 import time
 from threading import Thread
 from tkinter import filedialog
-
+from PIL import ImageTk, Image
+from tksheet import Sheet
+from searchbox import SearchBox
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -25,10 +28,16 @@ DATA_TAB_4 = '\t\t\t\t   '
 
 root = Tk()
 root.title('')
-root.geometry('800x500')
+root.geometry('900x550')
 
 tracker = FALSE
 captureTracker = TRUE
+helpwindowColor = "#33312c"
+abotwindowColor = "#33312c"
+rootwindowColor = "#33312c"
+topframeColor = "#33312c"
+
+root["bg"] = rootwindowColor
 
 
 def detectInterface():
@@ -37,6 +46,31 @@ def detectInterface():
     messagebox.showinfo("Connection", "Successfully Connection Created!. ")
     global tracker
     tracker = TRUE
+
+
+def clickAbout():
+    window = Toplevel(root)
+    window["bg"] = abotwindowColor
+    window.geometry("400x500")
+    window.title("About This Project")
+    label = Label(window, text="Packet Capturing Tools", bg=abotwindowColor, fg="white")
+    label.pack()
+    label = Label(window,
+                  text="SPL-3 project - 2019\n Institute of Information Technology\nUniversity of Dhaka\n\n\n "
+                       "Completed by: Imam Hossain Kawsar \nSupervised by: Shafiul Alam Khan\n\n",
+                  bg=abotwindowColor, fg="white")
+    label.pack()
+
+    label = Label(window,
+                  text="Captured Information: \n1. Ethernet frame\n2.IPV4 packet\n3.TCP protocol\n4.UDP "
+                       "protocol\n5.ICMP protocol\n\n",
+                  bg=abotwindowColor, fg="white")
+    label.pack()
+
+    label = Label(window,
+                  text="This project will find in the following link:\n https://github.com/imam-hossain-kawsar/SSNMT",
+                  bg=abotwindowColor, fg="white")
+    label.pack()
 
 
 def savePacket():
@@ -80,6 +114,29 @@ def generateReport():
         messagebox.showerror("Error", "Please create connection first!")
 
 
+def helpCLick():
+    helpwindow = Toplevel(root)
+    helpwindow["bg"] = helpwindowColor
+    helpwindow.geometry("400x500")
+    helpwindow.title("Help")
+    label = Label(helpwindow, text="Packet Capturing Tools", bg=helpwindowColor, fg="white")
+    label.pack()
+    label = Label(helpwindow,
+                  text=" ",
+                  bg=helpwindowColor, fg="white")
+    label.pack()
+
+    label = Label(helpwindow,
+                  text="",
+                  bg=helpwindowColor, fg="white")
+    label.pack()
+
+    label = Label(helpwindow,
+                  text="",
+                  bg=helpwindowColor, fg="white")
+    label.pack()
+
+
 def threaded_run():
     t = Thread(target=startCapture)
     t.daemon = True
@@ -92,71 +149,84 @@ def stopCapture():
 
 
 def startCapture():
-    conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-    cou = 0
     global captureTracker
+    if captureTracker:
+        conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+        cou = 0
+        # scrollbar = Scrollbar(root)
+        # scrollbar.pack(side=RIGHT, fill=Y)
+        # mylist = Listbox(root, yscrollcommand=scrollbar.set)
+        # newline = "\n"
 
-    while captureTracker == TRUE:
-        cou = cou + 1
-        raw_data, addr = conn.recvfrom(65536)
-        dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
+        while captureTracker == TRUE:
+            cou = cou + 1
+            raw_data, addr = conn.recvfrom(65536)
+            dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
+            # mylist.insert(END, "Ethernet Frame: {}, {},{}".format(cou, dest_mac, src_mac))
 
-        print('\n Ethernet Frame: ' + str(cou))
-        print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(dest_mac, src_mac, eth_proto))
+            # for line in range(100):
+            #     mylist.insert(END, "Ethernet Frame:{} ".format(cou))
 
-        if eth_proto == 8:
-            (version, header_length, ttl, proto, src, target, data) = ipv4_Packet(data)
-            print(TAB_1 + "IPV4 Packet:")
-            print(TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
-            print(TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
+            # mylist.pack(side=LEFT, fill=BOTH)
+            # scrollbar.config(command=mylist.yview)
 
-            # ICMP
-            if proto == 1:
-                icmp_type, code, checksum, data = icmp_packet(data)
-                print(TAB_1 + 'ICMP Packet:')
-                print(TAB_2 + 'Type: {}, Code: {}, Checksum: {},'.format(icmp_type, code, checksum))
-                print(TAB_2 + 'ICMP Data:')
-                print(format_output_line(DATA_TAB_3, data))
+            print('\n Ethernet Frame: ' + str(cou))
+            print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(dest_mac, src_mac, eth_proto))
 
-            # TCP
-            elif proto == 6:
-                src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin = struct.unpack(
-                    '! H H L L H H H H H H', raw_data[:24])
-                print(TAB_1 + 'TCP Segment:')
-                print(TAB_2 + 'Source Port: {}, Destination Port: {}'.format(src_port, dest_port))
-                print(TAB_2 + 'Sequence: {}, Acknowledgment: {}'.format(sequence, acknowledgment))
-                print(TAB_2 + 'Flags:')
-                print(TAB_3 + 'URG: {}, ACK: {}, PSH: {}'.format(flag_urg, flag_ack, flag_psh))
-                print(TAB_3 + 'RST: {}, SYN: {}, FIN:{}'.format(flag_rst, flag_syn, flag_fin))
+            if eth_proto == 8:
+                (version, header_length, ttl, proto, src, target, data) = ipv4_Packet(data)
+                print(TAB_1 + "IPV4 Packet:")
+                print(TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
+                print(TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
 
-                if len(data) > 0:
-                    # HTTP
-                    if src_port == 80 or dest_port == 80:
-                        print(TAB_2 + 'HTTP Data:')
-                        try:
-                            http = HTTP(data)
-                            http_info = str(http.data).split('\n')
-                            for line in http_info:
-                                print(DATA_TAB_3 + str(line))
-                        except:
+                # ICMP
+                if proto == 1:
+                    icmp_type, code, checksum, data = icmp_packet(data)
+                    print(TAB_1 + 'ICMP Packet:')
+                    print(TAB_2 + 'Type: {}, Code: {}, Checksum: {},'.format(icmp_type, code, checksum))
+                    print(TAB_2 + 'ICMP Data:')
+                    print(format_output_line(DATA_TAB_3, data))
+
+                # TCP
+                elif proto == 6:
+                    src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin = struct.unpack(
+                        '! H H L L H H H H H H', raw_data[:24])
+                    print(TAB_1 + 'TCP Segment:')
+                    print(TAB_2 + 'Source Port: {}, Destination Port: {}'.format(src_port, dest_port))
+                    print(TAB_2 + 'Sequence: {}, Acknowledgment: {}'.format(sequence, acknowledgment))
+                    print(TAB_2 + 'Flags:')
+                    print(TAB_3 + 'URG: {}, ACK: {}, PSH: {}'.format(flag_urg, flag_ack, flag_psh))
+                    print(TAB_3 + 'RST: {}, SYN: {}, FIN:{}'.format(flag_rst, flag_syn, flag_fin))
+
+                    if len(data) > 0:
+                        # HTTP
+                        if src_port == 80 or dest_port == 80:
+                            print(TAB_2 + 'HTTP Data:')
+                            try:
+                                http = HTTP(data)
+                                http_info = str(http.data).split('\n')
+                                for line in http_info:
+                                    print(DATA_TAB_3 + str(line))
+                            except:
+                                print(format_output_line(DATA_TAB_3, data))
+                        else:
+                            print(TAB_2 + 'TCP Data:')
                             print(format_output_line(DATA_TAB_3, data))
-                    else:
-                        print(TAB_2 + 'TCP Data:')
-                        print(format_output_line(DATA_TAB_3, data))
-            # UDP
-            elif proto == 17:
-                src_port, dest_port, length, data = udp_seg(data)
-                print(TAB_1 + 'UDP Segment:')
-                print(TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port, dest_port, length))
+                # UDP
+                elif proto == 17:
+                    src_port, dest_port, length, data = udp_seg(data)
+                    print(TAB_1 + 'UDP Segment:')
+                    print(
+                        TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port, dest_port, length))
 
-            # Other IPv4
+                # Other IPv4
+                else:
+                    print(TAB_1 + 'Other IPv4 Data:')
+                    print(format_output_line(DATA_TAB_2, data))
+                # await stopCapture()
             else:
-                print(TAB_1 + 'Other IPv4 Data:')
-                print(format_output_line(DATA_TAB_2, data))
-            # await stopCapture()
-        else:
-            print('Ethernet Data:')
-            print(format_output_line(DATA_TAB_1, data))
+                print('Ethernet Data:')
+                print(format_output_line(DATA_TAB_1, data))
 
 
 # Unpack Ethernet Frame
@@ -224,21 +294,22 @@ def format_output_line(prefix, string, size=80):
             size -= 1
             return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
 
+    else:
+        messagebox.showerror("Error", "Create Connection First")
 
-toplabel = Label(root, text="Packet Capturing Tool- software project lab3", bg="#00001a", fg="white")
+
+toplabel = Label(root, text="Packet Capturing Tool- software project lab3", bg=topframeColor, fg="white")
 toplabel.config(font=("Times", 14))
 toplabel.pack(fill=X)
 
-
 topFrame = Frame(root)
 topFrame.pack()
-
 
 bottomFrame = Frame(root)
 bottomFrame.pack(side=LEFT)
 
 connectionPhoto = PhotoImage(file="connection.png")
-connectionCreation = Button(topFrame, text="Create Connection", image=connectionPhoto, compound=LEFT, fg="#3c6160",
+connectionCreation = Button(topFrame, text="Connect", image=connectionPhoto, compound=LEFT, fg="#3c6160",
                             command=detectInterface)
 connectionCreation.pack(side=LEFT)
 
@@ -259,16 +330,36 @@ reportGenerate = Button(topFrame, text="Report", fg="#3c6160", image=reportPhoto
 reportGenerate.pack(side=LEFT)
 
 helpPhoto = PhotoImage(file="help.png")
-helpButton = Button(topFrame, text="Help", image=helpPhoto, compound=LEFT, fg="#3c6160")
+helpButton = Button(topFrame, text="Help", image=helpPhoto, compound=LEFT, fg="#3c6160", command=helpCLick)
 helpButton.pack(side=LEFT)
 
 aboutPhoto = PhotoImage(file="about.png")
-aboutButton = Button(topFrame, text="About", image=aboutPhoto, compound=LEFT, fg="#3c6160")
+aboutButton = Button(topFrame, text="About", image=aboutPhoto, compound=LEFT, fg="#3c6160", command=clickAbout)
 aboutButton.pack(side=LEFT)
 
 exitPhoto = PhotoImage(file="exit.png")
 exitButton = Button(topFrame, text="Exit", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
 exitButton.pack(side=LEFT)
 
+exitButton.config(height=30, width=80)
+helpButton.config(height=30, width=80)
+aboutButton.config(height=30, width=80)
+
+connectionCreation.config(height=30, width=80)
+captureStart.config(height=30, width=80)
+captureStop.config(height=30, width=80)
+saveFile.config(height=30, width=80)
+reportGenerate.config(height=30, width=80)
+
+# path = "background.png"
+#
+# # Creates a Tkinter-compatible photo image, which can be used everywhere Tkinter expects an image object.
+# img = ImageTk.PhotoImage(Image.open(path))
+#
+# # The Label widget is a standard Tkinter widget used to display a text or image on the screen.
+# panel = Label(root, image=img)
+#
+# # The Pack geometry manager packs widgets in rows or columns.
+# panel.pack(side="bottom", fill="both", expand="yes")
 
 root.mainloop()
