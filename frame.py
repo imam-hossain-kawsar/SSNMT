@@ -28,10 +28,17 @@ DATA_TAB_4 = '\t\t\t\t   '
 
 root = Tk()
 root.title('')
-root.geometry('900x550')
+root.geometry('950x550')
 
 tracker = FALSE
 captureTracker = TRUE
+
+OPTIONS = [
+    "NONE",
+    "TCP",
+    "UDP",
+    "ICMP"
+]
 helpwindowColor = "#33312c"
 abotwindowColor = "#33312c"
 rootwindowColor = "#33312c"
@@ -306,7 +313,15 @@ topFrame = Frame(root)
 topFrame.pack()
 
 bottomFrame = Frame(root)
-bottomFrame.pack(side=LEFT)
+bottomFrame.pack()
+
+labelFilter = Label(topFrame, text="Filter")
+labelFilter.pack(side=LEFT)
+
+variable = StringVar(topFrame)
+variable.set(OPTIONS[0])
+w = OptionMenu(topFrame, variable, *OPTIONS)
+w.pack(side=LEFT)
 
 connectionPhoto = PhotoImage(file="connection.png")
 connectionCreation = Button(topFrame, text="Connect", image=connectionPhoto, compound=LEFT, fg="#3c6160",
