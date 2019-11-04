@@ -17,6 +17,8 @@ from tksheet import Sheet
 from searchbox import SearchBox
 import itertools
 from itertools import zip_longest
+import matplotlib.pyplot as plt
+import numpy as np
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -39,7 +41,8 @@ OPTIONS = [
     "NONE",
     "TCP",
     "UDP",
-    "ICMP"
+    "ICMP",
+    "OTHERS"
 ]
 helpwindowColor = "#33312c"
 abotwindowColor = "#33312c"
@@ -59,13 +62,35 @@ tcpdatapacketcolor = "#3cc41a"
 udpdatapacketcolor = "yellow"
 otherdatapacketcolor = "#21dbcc"
 
+ethernetPacketCount = 0
+ipv4PacketCount = 0
+tcpPacketCount = 0
+udpPacketCount = 0
+icmpPacketCount = 0
+othersPacketCount = 0
+
+
 def detectInterface():
-    conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-    print('connection created!!!!!!!!!')
-    messagebox.showinfo("Connection", "Successfully Connection Created!. ")
-    global tracker
-    tracker = TRUE
-    captureStart['state'] = 'normal'
+    for timeout in [5]:
+        try:
+            print("checking internet connection..")
+            socket.setdefaulttimeout(timeout)
+            host = socket.gethostbyname("www.google.com")
+            s = socket.create_connection((host, 80), 2)
+            s.close()
+            print("internet on.")
+            conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+            print('connection created!!!!!!!!!')
+            messagebox.showinfo("Connection", "Successfully Connection Created!. ")
+            global tracker
+            tracker = TRUE
+            captureStart['state'] = 'normal'
+            break
+
+        except Exception as e:
+            print(e)
+            print("internet off.")
+            messagebox.showerror("internet connection", "Please, check your internet connection")
 
 
 def clickAbout():
@@ -137,34 +162,52 @@ def generateReport():
 def helpCLick():
     helpwindow = Toplevel(root)
     helpwindow["bg"] = helpwindowColor
-    helpwindow.geometry("400x500")
+    helpwindow.geometry("800x500")
     helpwindow.title("Help")
+
     label = Label(helpwindow, text="Packet Capturing Tools\n\n", bg=helpwindowColor, fg="white")
-    label.pack()
-    label = Label(helpwindow,
-                  text="Green indicates TCP packets ",
-                  bg=helpwindowColor, fg=tcpdatapacketcolor)
+    label.config(font=("Times", 15))
     label.pack()
 
-    label = Label(helpwindow,
-                  text="Yellow indicates UDP packets",
-                  bg=helpwindowColor, fg=udpdatapacketcolor)
-    label.pack()
+    scrollbar = Scrollbar(helpwindow)
+    scrollbar.pack(side=RIGHT, fill=Y)
 
-    label = Label(helpwindow,
-                  text="Light sky blue indicates Except tcp/udp/icmp packets",
-                  bg=helpwindowColor, fg=otherdatapacketcolor)
-    label.pack()
+    mylist = Listbox(helpwindow, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
+                     font='Times', bg=helpwindowColor, fg="white")
 
-    label = Label(helpwindow,
-                  text="\n\n Requirements and dependencies:",
-                  bg=helpwindowColor, fg="white")
-    label.pack()
-    label = Label(helpwindow,
-                  text="1. python 3.6 or higher\n2. socket\n3. fpdf\n4. tkinter",
-                  bg=helpwindowColor, fg="white")
-    label.pack()
+    mylist.insert(END, "TTL Explanation: ")
+    mylist.insert(END, "\t" + "0 is restricted to the same host")
+    mylist.insert(END, "\t" + "1 is restricted to the same subnet")
+    mylist.insert(END, "\t" + "32 is restricted to the same site")
+    mylist.insert(END, "\t" + "64 is restricted to the same region")
+    mylist.insert(END, "\t" + "128 is restricted to the same continent")
+    mylist.insert(END, "\t" + "255 is unrestricted")
 
+    mylist.pack(side=LEFT, fill=BOTH)
+    scrollbar.config(command=mylist.yview)
+    # label = Label(helpwindow,
+    #               text="Green indicates TCP packets ",
+    #               bg=helpwindowColor, fg=tcpdatapacketcolor)
+    # label.pack()
+    #
+    # label = Label(helpwindow,
+    #               text="Yellow indicates UDP packets",
+    #               bg=helpwindowColor, fg=udpdatapacketcolor)
+    # label.pack()
+    #
+    # label = Label(helpwindow,
+    #               text="Light sky blue indicates Except tcp/udp/icmp packets",
+    #               bg=helpwindowColor, fg=otherdatapacketcolor)
+    # label.pack()
+    #
+    # label = Label(helpwindow,
+    #               text="\n\n Requirements and dependencies:",
+    #               bg=helpwindowColor, fg="white")
+    # label.pack()
+    # label = Label(helpwindow,
+    #               text="1. python 3.6 or higher\n2. socket\n3. fpdf\n4. tkinter",
+    #               bg=helpwindowColor, fg="white")
+    # label.pack()
 
 
 # def experimentCapture():
@@ -182,6 +225,46 @@ def helpCLick():
 #
 #     mylist.pack(side=LEFT, fill=BOTH)
 #     scrollbar.config(command=mylist.yview)
+
+def func(pct, allvals):
+    absolute = int(pct / 100. * np.sum(allvals))
+    print(pct)
+    return "{:.3f}%\n".format(pct)
+
+
+def graphGenerate():
+    # labels = 'TCP', 'UDP', 'ICMP', 'OTHERS'
+    #
+    tcpsize = float((tcpPacketCount * 100) / ethernetPacketCount)
+    udpsize = float((udpPacketCount * 100) / (ethernetPacketCount))
+    icmpsize = float((icmpPacketCount * 100) / (ethernetPacketCount))
+    otherssize = float((othersPacketCount * 100) / (ethernetPacketCount))
+
+    # sizes = [tcpsize, udpsize, icmpsize, otherssize]
+    # explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'udpsize')
+    #
+    # fig1, ax1 = plt.subplots()
+    # ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+    #         shadow=True, startangle=90)
+    # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+    data = [tcpPacketCount, udpPacketCount, icmpPacketCount, othersPacketCount]
+    protocols = ["tcp", "udp", "icmp", "others"]
+
+    wedges, texts, autotexts = ax.pie(data, autopct=lambda pct: func(pct, data),
+                                      textprops=dict(color="w"))
+    #######################
+    ax.legend(wedges, protocols,
+              title="Protocols",
+              loc="center left",
+              bbox_to_anchor=(1, 0, 0.5, 1))
+
+    plt.setp(autotexts, size=8, weight="bold")
+
+    ax.set_title("Protocol: TCP/ UDP/ ICMP/ OTHERS")
+    plt.show()
 
 
 def threaded_run():
@@ -231,6 +314,8 @@ def startCapture():
             if captureTracker == FALSE:
                 break
             cou = cou + 1
+            global ethernetPacketCount
+            ethernetPacketCount = ethernetPacketCount + 1
             raw_data, addr = conn.recvfrom(65536)
             dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
             # mylist.insert(END, "Ethernet Frame: {}, {},{}".format(cou, dest_mac, src_mac))
@@ -247,32 +332,39 @@ def startCapture():
             ethernet_protocol_address.append(eth_proto)
 
             print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(dest_mac, src_mac, eth_proto))
-            mylist.insert(END, ".....................................................................................................................................................................................")
+            mylist.insert(END,
+                          ".....................................................................................................................................................................................")
             mylist.insert(END, "Ethernet Frame: {}".format(str(cou)))
+            mylist.itemconfigure(END, fg="red")
             mylist.insert(END, TAB_1 + "MAC(destination): {}, MAC(source): {}, Port: {}".format(dest_mac, src_mac,
                                                                                                 eth_proto))
+            mylist.itemconfigure(END, fg="red")
 
             mylist.pack(side=LEFT, fill=BOTH)
             scrollbar.config(command=mylist.yview)
 
             if eth_proto == 8:
+
                 (version, header_length, ttl, proto, src, target, data) = ipv4_Packet(data)
                 mylist.insert(END, TAB_1 + "IPV4 Packet:")
                 mylist.insert(END,
                               TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
                 mylist.insert(END, TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
-
+                global ipv4PacketCount
+                ipv4PacketCount = ipv4PacketCount + 1
                 print(TAB_1 + "IPV4 Packet:")
                 print(TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
                 print(TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
 
                 # ICMP
                 if proto == 1 and (filter_tracker == 'NONE' or filter_tracker == 'ICMP'):
+                    global icmpPacketCount
+                    icmpPacketCount = icmpPacketCount + 1
                     icmp_type, code, checksum, data = icmp_packet(data)
                     mylist.itemconfigure(END, fg="blue")
                     mylist.insert(END, TAB_1 + 'ICMP Packet:')
                     mylist.insert(END, TAB_2 + 'Type: {}, Code: {}, Checksum: {},'.format(icmp_type, code, checksum))
-                    mylist.insert(END, TAB_2 + 'ICMP Data: ' + format_output_line(DATA_TAB_3, data))
+                    mylist.insert(END, TAB_2 + 'ICMP Data: ' + str(format_output_line(DATA_TAB_3, data)))
 
                     print(TAB_1 + 'ICMP Packet:')
                     print(TAB_2 + 'Type: {}, Code: {}, Checksum: {},'.format(icmp_type, code, checksum))
@@ -281,6 +373,8 @@ def startCapture():
 
                 # TCP
                 elif proto == 6 and (filter_tracker == 'NONE' or filter_tracker == 'TCP'):
+                    global tcpPacketCount
+                    tcpPacketCount = tcpPacketCount + 1
                     src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin = struct.unpack(
                         '! H H L L H H H H H H', raw_data[:24])
 
@@ -306,7 +400,7 @@ def startCapture():
 
                     if len(data) > 0:
                         # HTTP
-                        if src_port == 80 or dest_port == 80:
+                        if src_port == 80 or dest_port == 80 or src_port == 443 or dest_port == 443:
                             mylist.insert(END, TAB_2 + 'HTTP Data:')
                             print(TAB_2 + 'HTTP Data:')
                             try:
@@ -327,6 +421,8 @@ def startCapture():
                             print(format_output_line(DATA_TAB_3, data))
                 # UDP
                 elif proto == 17 and (filter_tracker == 'NONE' or filter_tracker == 'UDP'):
+                    global udpPacketCount
+                    udpPacketCount = udpPacketCount + 1
                     src_port, dest_port, length, data = udp_seg(data)
                     mylist.insert(END, TAB_1 + 'UDP Segment:')
                     mylist.itemconfigure(END, fg=udpdatapacketcolor)
@@ -340,7 +436,9 @@ def startCapture():
                         TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port, dest_port, length))
 
                 # Other IPv4
-                elif filter_tracker=='NONE':
+                elif filter_tracker == 'OTHERS':
+                    global othersPacketCount
+                    othersPacketCount = othersPacketCount + 1
                     mylist.insert(END, TAB_1 + 'Other IPv4 Data:')
                     mylist.itemconfigure(END, fg=otherdatapacketcolor)
                     mylist.insert(END, format_output_line(DATA_TAB_2, data))
@@ -348,6 +446,8 @@ def startCapture():
                     print(TAB_1 + 'Other IPv4 Data:')
                     print(format_output_line(DATA_TAB_2, data))
                 # await stopCapture()
+            elif eth_proto == 806:
+                print("Found ARP packet..........")
             else:
                 mylist.insert(END, 'Ethernet Data:')
                 mylist.insert(END, format_output_line(DATA_TAB_1, data))
@@ -420,9 +520,6 @@ def format_output_line(prefix, string, size=80):
             size -= 1
             return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
 
-    else:
-        messagebox.showerror("Error", "Create Connection First")
-
 
 toplabel = Label(root, text="Packet Capturing Tool- software project lab3", bg=topframeColor, fg="white")
 toplabel.config(font=("Times", 14))
@@ -462,7 +559,8 @@ saveFile['state'] = 'disabled'
 saveFile.pack(side=LEFT)
 
 reportPhoto = PhotoImage(file="report.png")
-reportGenerate = Button(topFrame, text="Report", fg="#3c6160", image=reportPhoto, compound=LEFT, command=generateReport)
+
+reportGenerate = Button(topFrame, text="Report", fg="#3c6160", image=reportPhoto, compound=LEFT, command=graphGenerate)
 reportGenerate['state'] = 'disabled'
 reportGenerate.pack(side=LEFT)
 
