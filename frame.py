@@ -240,6 +240,10 @@ def graphGenerate():
     icmpsize = float((icmpPacketCount * 100) / (ethernetPacketCount))
     otherssize = float((othersPacketCount * 100) / (ethernetPacketCount))
 
+    print("number of tcp packet: " + str(tcpPacketCount))
+    print("number of udp packet: "+ str(udpPacketCount))
+    print("number of icmp packet: "+ str(icmpPacketCount))
+    print("number of others packet: "+ str(othersPacketCount))
     # sizes = [tcpsize, udpsize, icmpsize, otherssize]
     # explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'udpsize')
     #
