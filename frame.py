@@ -121,22 +121,30 @@ def clickAbout():
 def savePacket():
     if tracker == TRUE:
         filename = filedialog.asksaveasfilename(initialdir="/home/ssnmt", title="Select file",
-                                                filetypes=(("pdf files", "*.pdf"), ("all files", "*.*")))
+                                                filetypes=(("text files", "*.txt"), ("all files", "*.*")))
         if filename:
             filename = filename
         else:
             messagebox.showerror("Error", "Select File Name First! ")
 
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font('Times', 'B', 16)
-        pdf.cell(80)
-        pdf.cell(40, 10, 'Captured Packet Information', 1, 0, 'C')
-        pdf.output(filename, 'F')
-        print("Packet saved!!!!!!!!!!")
-        messagebox.showinfo("Store Capture Packet", "saved!!!!!")
-    else:
-        messagebox.showerror("Error", "Please create connection first!")
+    with open(filename, 'w+') as wf:
+        for line in range(ethernetPacketCount):
+            wf.write(
+                "Ethernet Frame: {}{}{}MAC(destination): {}, MAC(source): {}, Port: {}, {}".format(
+                    ethernetPacketCount, "\n", TAB_1,ethernet_destination_MAC_address[line],
+                    ethernet_source_MAC_address[line],
+                    ethernet_protocol_address[line], "\n"))
+
+    #     pdf = FPDF()
+    #     pdf.add_page()
+    #     pdf.set_font('Times', 'B', 16)
+    #     pdf.cell(80)
+    #     pdf.cell(40, 10, 'Captured Packet Information', 1, 0, 'C')
+    #     pdf.output(filename, 'F')
+    #     print("Packet saved!!!!!!!!!!")
+    #     messagebox.showinfo("Store Capture Packet", "saved!!!!!")
+    # else:
+    #     messagebox.showerror("Error", "Please create connection first!")
 
 
 def generateReport():
@@ -241,9 +249,9 @@ def graphGenerate():
     otherssize = float((othersPacketCount * 100) / (ethernetPacketCount))
 
     print("number of tcp packet: " + str(tcpPacketCount))
-    print("number of udp packet: "+ str(udpPacketCount))
-    print("number of icmp packet: "+ str(icmpPacketCount))
-    print("number of others packet: "+ str(othersPacketCount))
+    print("number of udp packet: " + str(udpPacketCount))
+    print("number of icmp packet: " + str(icmpPacketCount))
+    print("number of others packet: " + str(othersPacketCount))
     # sizes = [tcpsize, udpsize, icmpsize, otherssize]
     # explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'udpsize')
     #
