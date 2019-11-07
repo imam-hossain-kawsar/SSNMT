@@ -53,6 +53,27 @@ root["bg"] = rootwindowColor
 ethernet_destination_MAC_address = []
 ethernet_source_MAC_address = []
 ethernet_protocol_address = []
+ipv4_version = []
+ipv4_header = []
+ipv4_ttl = []
+ipv4_protocol = []
+ipv4_source_address = []
+ipv4_target_address = []
+
+tcp_source_port = []
+tcp_destination_port = []
+tcp_sequence = []
+tcp_acknowledgment = []
+tcp_URG = []
+tcp_ACK = []
+tcp_PSH = []
+tcp_RST = []
+tcp_SYN = []
+tcp_FIN = []
+
+udp_source_port = []
+udp_destination_port = []
+udp_length = []
 
 filter_tracker = ""
 thread_controller = TRUE
@@ -128,12 +149,58 @@ def savePacket():
             messagebox.showerror("Error", "Select File Name First! ")
 
     with open(filename, 'w+') as wf:
+        i_ipv4 = 0
+        j_tcp = 0
+        k_udp = 0
+        l_icmp = 0
         for line in range(ethernetPacketCount):
             wf.write(
-                "Ethernet Frame: {}{}{}MAC(destination): {}, MAC(source): {}, Port: {}, {}".format(
-                    ethernetPacketCount, "\n", TAB_1,ethernet_destination_MAC_address[line],
+                "-----------------------------------------------------------------------------------------------{"
+                "}Ethernet Frame: {}{}{}MAC(destination): {}, MAC(source): {}, Port: {}{}".format(
+                    "\n", line + 1, "\n", TAB_1, ethernet_destination_MAC_address[line],
                     ethernet_source_MAC_address[line],
                     ethernet_protocol_address[line], "\n"))
+            if ethernet_protocol_address[line] == 8:
+                wf.write("{}IPV4 Packet:{}{}Version: {}, Header Length: {}, TTL: {}{}{}protocol: {}, Source: {}, "
+                         "Target: {}{}".format(TAB_1, "\n",
+                                               TAB_2,
+                                               ipv4_version[i_ipv4],
+                                               ipv4_header[i_ipv4],
+                                               ipv4_ttl[i_ipv4], "\n", TAB_3,
+                                               ipv4_protocol[i_ipv4], ipv4_source_address[i_ipv4],
+                                               ipv4_target_address[i_ipv4], "\n"))
+                if ipv4_protocol[i_ipv4] == 6:
+                    wf.write("{}TCP Segment:{}{}Source Port: {}, Destination Port: {}{}{} Sequence: {}, "
+                             "Acknowledgment: "
+                             "{}{}{}Flags:{}{}URG: {}, ACK: {}, "
+                             "PSH: {}{}{}RST: {}, SYN: {}, FIN: {}{}".format(TAB_1, "\n", TAB_2, tcp_source_port[j_tcp],
+                                                                             tcp_destination_port[j_tcp], "\n", TAB_2,
+                                                                             tcp_sequence[j_tcp],
+                                                                             tcp_acknowledgment[j_tcp],
+                                                                             "\n", TAB_2, "\n", TAB_3, tcp_URG[j_tcp],
+                                                                             tcp_ACK[j_tcp],
+                                                                             tcp_PSH[j_tcp], "\n", TAB_3,
+                                                                             tcp_RST[j_tcp],
+                                                                             tcp_SYN[j_tcp],
+                                                                             tcp_FIN[j_tcp], "\n"))
+                    j_tcp = j_tcp + 1
+
+                elif ipv4_protocol[i_ipv4] == 17:
+                    wf.write("{}UDP Segment:{}{}Source Port: {}, Destination Port: {} Length: {}{}".format(TAB_1, "\n",
+                                                                                                           TAB_2,
+                                                                                                           udp_source_port[
+                                                                                                               k_udp],
+                                                                                                           udp_destination_port[
+                                                                                                               k_udp],
+                                                                                                           udp_length[
+                                                                                                               k_udp],
+                                                                                                           "\n"))
+                    k_udp = k_udp + 1
+
+                elif ipv4_protocol[i_ipv4] == 1:
+                    print()
+
+                i_ipv4 = i_ipv4 + 1
 
     #     pdf = FPDF()
     #     pdf.add_page()
@@ -278,6 +345,24 @@ def graphGenerate():
     ax.set_title("Protocol: TCP/ UDP/ ICMP/ OTHERS")
     plt.show()
 
+    fig_2, ay = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+    data = [ethernetPacketCount, ipv4PacketCount]
+    protocolsy = ["Ethernet Frame", "IPV4"]
+
+    wedgesy, textsy, autotextsy = ay.pie(data, autopct=lambda pct: func(pct, data),
+                                         textprops=dict(color="w"))
+    #######################
+    ay.legend(wedgesy, protocolsy,
+              title="Packet Type",
+              loc="center left",
+              bbox_to_anchor=(1, 0, 0.5, 1))
+
+    plt.setp(autotextsy, size=8, weight="bold")
+
+    ay.set_title("Ethernet packet & IPV4 packet comparison")
+    plt.show()
+
 
 def threaded_run():
     global t
@@ -364,6 +449,12 @@ def startCapture():
                 mylist.insert(END, TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
                 global ipv4PacketCount
                 ipv4PacketCount = ipv4PacketCount + 1
+                ipv4_version.append(version)
+                ipv4_header.append(header_length)
+                ipv4_ttl.append(ttl)
+                ipv4_protocol.append(proto)
+                ipv4_source_address.append(src)
+                ipv4_target_address.append(target)
                 print(TAB_1 + "IPV4 Packet:")
                 print(TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
                 print(TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
@@ -389,6 +480,17 @@ def startCapture():
                     tcpPacketCount = tcpPacketCount + 1
                     src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin = struct.unpack(
                         '! H H L L H H H H H H', raw_data[:24])
+
+                    tcp_source_port.append(src_port)
+                    tcp_destination_port.append(dest_port)
+                    tcp_sequence.append(sequence)
+                    tcp_acknowledgment.append(acknowledgment)
+                    tcp_URG.append(flag_urg)
+                    tcp_ACK.append(flag_ack)
+                    tcp_PSH.append(flag_psh)
+                    tcp_RST.append(flag_rst)
+                    tcp_SYN.append(flag_syn)
+                    tcp_FIN.append(flag_fin)
 
                     mylist.insert(END, TAB_1 + 'TCP Segment:')
                     mylist.itemconfigure(END, fg=tcpdatapacketcolor)
@@ -436,6 +538,11 @@ def startCapture():
                     global udpPacketCount
                     udpPacketCount = udpPacketCount + 1
                     src_port, dest_port, length, data = udp_seg(data)
+
+                    udp_source_port.append(src_port)
+                    udp_destination_port.append(dest_port)
+                    udp_length.append(length)
+
                     mylist.insert(END, TAB_1 + 'UDP Segment:')
                     mylist.itemconfigure(END, fg=udpdatapacketcolor)
                     mylist.insert(END, TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port,
