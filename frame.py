@@ -19,6 +19,9 @@ import itertools
 from itertools import zip_longest
 import matplotlib.pyplot as plt
 import numpy as np
+from _datetime import datetime
+
+
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -79,9 +82,13 @@ filter_tracker = ""
 thread_controller = TRUE
 t = None
 
-tcpdatapacketcolor = "#3cc41a"
+#tcpdatapacketcolor = "#3cc41a"
+tcpdatapacketcolor = "bisque2"
+tcpbackgroundtcolor = "SkyBlue1"
+ethernetbackgroundcolor = "LightSkyBlue1"
 udpdatapacketcolor = "yellow"
 otherdatapacketcolor = "#21dbcc"
+udpbackgroundcolor = "pale green"
 
 ethernetPacketCount = 0
 ipv4PacketCount = 0
@@ -148,11 +155,20 @@ def savePacket():
         else:
             messagebox.showerror("Error", "Select File Name First! ")
 
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+
     with open(filename, 'w+') as wf:
         i_ipv4 = 0
         j_tcp = 0
         k_udp = 0
         l_icmp = 0
+        wf.write("                                                   Report On Captured Data {}{}{}{}{}".format("(",
+                                                                                                                "Captured Time: ",
+                                                                                                                current_time,
+                                                                                                                ")",
+                                                                                                                "\n\n"))
+
         for line in range(ethernetPacketCount):
             wf.write(
                 "-----------------------------------------------------------------------------------------------{"
@@ -241,7 +257,7 @@ def helpCLick():
     helpwindow.title("Help")
 
     label = Label(helpwindow, text="Packet Capturing Tools\n\n", bg=helpwindowColor, fg="white")
-    label.config(font=("Times", 15))
+    label.config(font=("Times", 16, "bold"))
     label.pack()
 
     scrollbar = Scrollbar(helpwindow)
@@ -249,6 +265,44 @@ def helpCLick():
 
     mylist = Listbox(helpwindow, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
                      font='Times', bg=helpwindowColor, fg="white")
+
+    mylist.insert(END, "UDP Packet:")
+    mylist.itemconfigure(END, fg="black", bg=udpbackgroundcolor)
+    mylist.insert(END, "\t"+"User datagram protocol (UDP) operates on top of the Internet Protocol (IP) to transmit datagrams over a network.")
+    mylist.insert(END, "\t"+"UDP does not require the source and destination to establish a three-way handshake before transmission takes place.")
+    mylist.insert(END, "\t"+"Additionally, there is no need for an end-to-end connection.")
+    mylist.insert(END, "\t"+"UDP is commonly used for Remote Procedure Call (RPC) applications, although RPC can also run on top of TCP.")
+    mylist.insert(END, "\t"+"UDP is a connectionless protocol that contains no reliability, flow-control, or error-recovery functions.")
+    mylist.insert(END, "UDP Header Packet Structure:")
+    mylist.insert(END, "\t"+"- Source Port")
+    mylist.insert(END, "\t\t"+"-The port of the device sending the data. This field can be set to zero if the destination computer doesn’t need to reply to the sender.")
+    mylist.insert(END, "\t" + "- Destination Port")
+    mylist.insert(END,
+                  "\t\t" + "-The port of the device receiving the data. UDP port numbers can be between 0 and 65,535.")
+    mylist.insert(END, "\t" + "- Length")
+    mylist.insert(END,
+                  "\t\t" + "-Specifies the number of bytes comprising the UDP header and the UDP payload data.")
+    mylist.insert(END,
+                  "\t\t" + "-The limit for the UDP length field is determined by the underlying IP protocol used to transmit the data.")
+
+    mylist.insert(END, "\n")
+
+    mylist.insert(END, "TCP Packet:")
+    mylist.itemconfigure(END, fg="black", bg=tcpdatapacketcolor)
+    mylist.insert(END, "\t"+"TCP (Transmission Control Protocol), which is documented in RFC 793")
+    mylist.insert(END, "\t"+"TCP is a connection-oriented Layer 4 protocol that provides full-duplex, acknowledged, and flow-controlled service to upper-layer protocols.")
+    mylist.insert(END, "\t"+"The TCP packet format consists of these fields:")
+    mylist.insert(END, "\t\t"+ "Source Port and Destination Port fields (16 bits each) identify the end points of the connection.")
+    mylist.insert(END, "\t\t"+"Sequence Number field (32 bits) specifies the number assigned to the first byte of data in the current message.")
+    mylist.insert(END, "\t\t"+ "Acknowledgement Number field (32 bits) contains the value of the next sequence number that the sender of the segment is expecting to receive, if the ACK control bit is set.")
+    mylist.insert(END, "\t\t"+ "Data Offset (a.k.a. Header Length) field (variable length) tells how many 32-bit words are contained in the TCP header.")
+    mylist.insert(END, "\t\t"+ "Flags field (6 bits) contains the various flags:")
+    mylist.insert(END, "\t\t\t"+ "URG—Indicates that some urgent data has been placed.")
+    mylist.insert(END, "\t\t\t"+ "ACK—Indicates that acknowledgement number is valid.")
+    mylist.insert(END, "\t\t\t"+ "PSH—Indicates that data should be passed to the application as soon as possible.")
+    mylist.insert(END, "\t\t\t"+ "RST—Resets the connection.")
+    mylist.insert(END, "\t\t\t"+ "SYN—Synchronizes sequence numbers to initiate a connection.")
+    mylist.insert(END, "\t\t\t"+ "FIN—Means that the sender of the flag has finished sending data.")
 
     mylist.insert(END, "TTL Explanation: ")
     mylist.insert(END, "\t" + "0 is restricted to the same host")
@@ -432,10 +486,10 @@ def startCapture():
             mylist.insert(END,
                           ".....................................................................................................................................................................................")
             mylist.insert(END, "Ethernet Frame: {}".format(str(cou)))
-            mylist.itemconfigure(END, fg="red")
+            mylist.itemconfigure(END, fg="black", bg=ethernetbackgroundcolor)
             mylist.insert(END, TAB_1 + "MAC(destination): {}, MAC(source): {}, Port: {}".format(dest_mac, src_mac,
                                                                                                 eth_proto))
-            mylist.itemconfigure(END, fg="red")
+            mylist.itemconfigure(END, fg="LightSkyBlue1")
 
             mylist.pack(side=LEFT, fill=BOTH)
             scrollbar.config(command=mylist.yview)
@@ -444,9 +498,12 @@ def startCapture():
 
                 (version, header_length, ttl, proto, src, target, data) = ipv4_Packet(data)
                 mylist.insert(END, TAB_1 + "IPV4 Packet:")
+                mylist.itemconfigure(END, fg="black", bg="honeydew2")
                 mylist.insert(END,
                               TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
+                mylist.itemconfigure(END, fg="honeydew2")
                 mylist.insert(END, TAB_3 + 'protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
+                mylist.itemconfigure(END, fg="honeydew2")
                 global ipv4PacketCount
                 ipv4PacketCount = ipv4PacketCount + 1
                 ipv4_version.append(version)
@@ -493,7 +550,7 @@ def startCapture():
                     tcp_FIN.append(flag_fin)
 
                     mylist.insert(END, TAB_1 + 'TCP Segment:')
-                    mylist.itemconfigure(END, fg=tcpdatapacketcolor)
+                    mylist.itemconfigure(END, fg="black", bg="bisque2")
                     mylist.insert(END, TAB_2 + 'Source Port: {}, Destination Port: {}'.format(src_port, dest_port))
                     mylist.itemconfigure(END, fg=tcpdatapacketcolor)
                     mylist.insert(END, TAB_2 + 'Sequence: {}, Acknowledgment: {}'.format(sequence, acknowledgment))
@@ -544,11 +601,11 @@ def startCapture():
                     udp_length.append(length)
 
                     mylist.insert(END, TAB_1 + 'UDP Segment:')
-                    mylist.itemconfigure(END, fg=udpdatapacketcolor)
+                    mylist.itemconfigure(END, fg="black", bg=udpbackgroundcolor)
                     mylist.insert(END, TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port,
                                                                                                           dest_port,
                                                                                                           length))
-                    mylist.itemconfigure(END, fg=udpdatapacketcolor)
+                    mylist.itemconfigure(END, fg=udpbackgroundcolor)
 
                     print(TAB_1 + 'UDP Segment:')
                     print(
@@ -641,7 +698,7 @@ def format_output_line(prefix, string, size=80):
 
 
 toplabel = Label(root, text="Packet Capturing Tool- software project lab3", bg=topframeColor, fg="white")
-toplabel.config(font=("Times", 14))
+toplabel.config(font=("Times", 16, "bold"))
 toplabel.pack(fill=X)
 
 topFrame = Frame(root)
@@ -658,41 +715,41 @@ w = OptionMenu(topFrame, variable, *OPTIONS)
 w.pack(side=LEFT)
 
 connectionPhoto = PhotoImage(file="connection.png")
-connectionCreation = Button(topFrame, text="Connect", image=connectionPhoto, compound=LEFT, fg="#3c6160",
+connectionCreation = Button(topFrame, text="CONNECT", image=connectionPhoto, compound=LEFT, fg="#3c6160",
                             command=detectInterface)
 connectionCreation.pack(side=LEFT)
 
 startphoto = PhotoImage(file="start.png")
-captureStart = Button(topFrame, text="Start", image=startphoto, compound=LEFT, fg="#3c6160", command=threaded_run)
+captureStart = Button(topFrame, text="START", image=startphoto, compound=LEFT, fg="#3c6160", command=threaded_run)
 captureStart['state'] = 'disabled'
 captureStart.pack(side=LEFT)
 
 stopPhoto = PhotoImage(file="finish.png")
-captureStop = Button(topFrame, text="Stop", image=stopPhoto, compound=LEFT, fg="#3c6160", command=stopCapture)
+captureStop = Button(topFrame, text="STOP", image=stopPhoto, compound=LEFT, fg="#3c6160", command=stopCapture)
 captureStop['state'] = 'disabled'
 captureStop.pack(side=LEFT)
 
 savePhoto = PhotoImage(file="save.png")
-saveFile = Button(topFrame, text="Save", image=savePhoto, compound=LEFT, fg="#3c6160", command=savePacket)
+saveFile = Button(topFrame, text="SAVE", image=savePhoto, compound=LEFT, fg="#3c6160", command=savePacket)
 saveFile['state'] = 'disabled'
 saveFile.pack(side=LEFT)
 
 reportPhoto = PhotoImage(file="report.png")
 
-reportGenerate = Button(topFrame, text="Report", fg="#3c6160", image=reportPhoto, compound=LEFT, command=graphGenerate)
+reportGenerate = Button(topFrame, text="REPORT", fg="#3c6160", image=reportPhoto, compound=LEFT, command=graphGenerate)
 reportGenerate['state'] = 'disabled'
 reportGenerate.pack(side=LEFT)
 
 helpPhoto = PhotoImage(file="help.png")
-helpButton = Button(topFrame, text="Help", image=helpPhoto, compound=LEFT, fg="#3c6160", command=helpCLick)
+helpButton = Button(topFrame, text="HELP", image=helpPhoto, compound=LEFT, fg="#3c6160", command=helpCLick)
 helpButton.pack(side=LEFT)
 
 aboutPhoto = PhotoImage(file="about.png")
-aboutButton = Button(topFrame, text="About", image=aboutPhoto, compound=LEFT, fg="#3c6160", command=clickAbout)
+aboutButton = Button(topFrame, text="ABOUT", image=aboutPhoto, compound=LEFT, fg="#3c6160", command=clickAbout)
 aboutButton.pack(side=LEFT)
 
 exitPhoto = PhotoImage(file="exit.png")
-exitButton = Button(topFrame, text="Exit", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
+exitButton = Button(topFrame, text="EXIT", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
 exitButton.pack(side=LEFT)
 
 exitButton.config(height=30, width=80)
