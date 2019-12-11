@@ -1,3 +1,4 @@
+import tkinter
 from email.policy import HTTP
 import asyncio
 from tkinter import *
@@ -20,8 +21,6 @@ from itertools import zip_longest
 import matplotlib.pyplot as plt
 import numpy as np
 from _datetime import datetime
-
-
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -78,11 +77,18 @@ udp_source_port = []
 udp_destination_port = []
 udp_length = []
 
+icmp_type_list = []
+icmp_code_list = []
+icmp_checksum_list = []
+icmp_data_list = []
+
+others_data_list = []
+
 filter_tracker = ""
 thread_controller = TRUE
 t = None
 
-#tcpdatapacketcolor = "#3cc41a"
+# tcpdatapacketcolor = "#3cc41a"
 tcpdatapacketcolor = "bisque2"
 tcpbackgroundtcolor = "SkyBlue1"
 ethernetbackgroundcolor = "LightSkyBlue1"
@@ -96,6 +102,11 @@ tcpPacketCount = 0
 udpPacketCount = 0
 icmpPacketCount = 0
 othersPacketCount = 0
+
+scrollbar = Scrollbar(root)
+scrollbar.pack(side=RIGHT, fill=Y)
+mylist = Listbox(root, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
+                 font='Times', bg=helpwindowColor, fg="white")
 
 
 def detectInterface():
@@ -163,6 +174,7 @@ def savePacket():
         j_tcp = 0
         k_udp = 0
         l_icmp = 0
+        m_others = 0
         wf.write("                                                   Report On Captured Data {}{}{}{}{}".format("(",
                                                                                                                 "Captured Time: ",
                                                                                                                 current_time,
@@ -185,7 +197,7 @@ def savePacket():
                                                ipv4_ttl[i_ipv4], "\n", TAB_3,
                                                ipv4_protocol[i_ipv4], ipv4_source_address[i_ipv4],
                                                ipv4_target_address[i_ipv4], "\n"))
-                if ipv4_protocol[i_ipv4] == 6:
+                if ipv4_protocol[i_ipv4] == 6 and (filter_tracker == 'NONE' or filter_tracker == 'TCP'):
                     wf.write("{}TCP Segment:{}{}Source Port: {}, Destination Port: {}{}{} Sequence: {}, "
                              "Acknowledgment: "
                              "{}{}{}Flags:{}{}URG: {}, ACK: {}, "
@@ -201,7 +213,7 @@ def savePacket():
                                                                              tcp_FIN[j_tcp], "\n"))
                     j_tcp = j_tcp + 1
 
-                elif ipv4_protocol[i_ipv4] == 17:
+                elif ipv4_protocol[i_ipv4] == 17 and (filter_tracker == 'NONE' or filter_tracker == 'UDP'):
                     wf.write("{}UDP Segment:{}{}Source Port: {}, Destination Port: {} Length: {}{}".format(TAB_1, "\n",
                                                                                                            TAB_2,
                                                                                                            udp_source_port[
@@ -213,8 +225,18 @@ def savePacket():
                                                                                                            "\n"))
                     k_udp = k_udp + 1
 
-                elif ipv4_protocol[i_ipv4] == 1:
-                    print()
+                elif ipv4_protocol[i_ipv4] == 1 and (filter_tracker == 'NONE' or filter_tracker == 'ICMP'):
+                    wf.write("{}ICMP Packet:{}{}Type: {}, Code: {}, Checksum: {}{}{}".format(TAB_1, "\n",
+                                        TAB_2,icmp_type_list[l_icmp],icmp_code_list[l_icmp],
+                                        icmp_checksum_list[l_icmp],"\n",TAB_2))
+
+                    l_icmp = l_icmp + 1
+
+
+                # elif filter_tracker == 'OTHERS' and ipv4_protocol[i_ipv4]!=1 and ipv4_protocol[i_ipv4]!=17 and ipv4_protocol[i_ipv4]!=6:
+                #     wf.write("{}Other IPv4 Data:{}{}{}".format(TAB_1, "\n", TAB_2,others_data_list[m_others]))
+                #
+                #     m_others = m_others + 1
 
                 i_ipv4 = i_ipv4 + 1
 
@@ -268,14 +290,19 @@ def helpCLick():
 
     mylist.insert(END, "UDP Packet:")
     mylist.itemconfigure(END, fg="black", bg=udpbackgroundcolor)
-    mylist.insert(END, "\t"+"User datagram protocol (UDP) operates on top of the Internet Protocol (IP) to transmit datagrams over a network.")
-    mylist.insert(END, "\t"+"UDP does not require the source and destination to establish a three-way handshake before transmission takes place.")
-    mylist.insert(END, "\t"+"Additionally, there is no need for an end-to-end connection.")
-    mylist.insert(END, "\t"+"UDP is commonly used for Remote Procedure Call (RPC) applications, although RPC can also run on top of TCP.")
-    mylist.insert(END, "\t"+"UDP is a connectionless protocol that contains no reliability, flow-control, or error-recovery functions.")
+    mylist.insert(END,
+                  "\t" + "User datagram protocol (UDP) operates on top of the Internet Protocol (IP) to transmit datagrams over a network.")
+    mylist.insert(END,
+                  "\t" + "UDP does not require the source and destination to establish a three-way handshake before transmission takes place.")
+    mylist.insert(END, "\t" + "Additionally, there is no need for an end-to-end connection.")
+    mylist.insert(END,
+                  "\t" + "UDP is commonly used for Remote Procedure Call (RPC) applications, although RPC can also run on top of TCP.")
+    mylist.insert(END,
+                  "\t" + "UDP is a connectionless protocol that contains no reliability, flow-control, or error-recovery functions.")
     mylist.insert(END, "UDP Header Packet Structure:")
-    mylist.insert(END, "\t"+"- Source Port")
-    mylist.insert(END, "\t\t"+"-The port of the device sending the data. This field can be set to zero if the destination computer doesn’t need to reply to the sender.")
+    mylist.insert(END, "\t" + "- Source Port")
+    mylist.insert(END,
+                  "\t\t" + "-The port of the device sending the data. This field can be set to zero if the destination computer doesn’t need to reply to the sender.")
     mylist.insert(END, "\t" + "- Destination Port")
     mylist.insert(END,
                   "\t\t" + "-The port of the device receiving the data. UDP port numbers can be between 0 and 65,535.")
@@ -289,22 +316,29 @@ def helpCLick():
 
     mylist.insert(END, "TCP Packet:")
     mylist.itemconfigure(END, fg="black", bg=tcpdatapacketcolor)
-    mylist.insert(END, "\t"+"TCP (Transmission Control Protocol), which is documented in RFC 793")
-    mylist.insert(END, "\t"+"TCP is a connection-oriented Layer 4 protocol that provides full-duplex, acknowledged, and flow-controlled service to upper-layer protocols.")
-    mylist.insert(END, "\t"+"The TCP packet format consists of these fields:")
-    mylist.insert(END, "\t\t"+ "Source Port and Destination Port fields (16 bits each) identify the end points of the connection.")
-    mylist.insert(END, "\t\t"+"Sequence Number field (32 bits) specifies the number assigned to the first byte of data in the current message.")
-    mylist.insert(END, "\t\t"+ "Acknowledgement Number field (32 bits) contains the value of the next sequence number that the sender of the segment is expecting to receive, if the ACK control bit is set.")
-    mylist.insert(END, "\t\t"+ "Data Offset (a.k.a. Header Length) field (variable length) tells how many 32-bit words are contained in the TCP header.")
-    mylist.insert(END, "\t\t"+ "Flags field (6 bits) contains the various flags:")
-    mylist.insert(END, "\t\t\t"+ "URG—Indicates that some urgent data has been placed.")
-    mylist.insert(END, "\t\t\t"+ "ACK—Indicates that acknowledgement number is valid.")
-    mylist.insert(END, "\t\t\t"+ "PSH—Indicates that data should be passed to the application as soon as possible.")
-    mylist.insert(END, "\t\t\t"+ "RST—Resets the connection.")
-    mylist.insert(END, "\t\t\t"+ "SYN—Synchronizes sequence numbers to initiate a connection.")
-    mylist.insert(END, "\t\t\t"+ "FIN—Means that the sender of the flag has finished sending data.")
+    mylist.insert(END, "\t" + "TCP (Transmission Control Protocol), which is documented in RFC 793")
+    mylist.insert(END,
+                  "\t" + "TCP is a connection-oriented Layer 4 protocol that provides full-duplex, acknowledged, and flow-controlled service to upper-layer protocols.")
+    mylist.insert(END, "\t" + "The TCP packet format consists of these fields:")
+    mylist.insert(END,
+                  "\t\t" + "Source Port and Destination Port fields (16 bits each) identify the end points of the connection.")
+    mylist.insert(END,
+                  "\t\t" + "Sequence Number field (32 bits) specifies the number assigned to the first byte of data in the current message.")
+    mylist.insert(END,
+                  "\t\t" + "Acknowledgement Number field (32 bits) contains the value of the next sequence number that the sender of the segment is expecting to receive, if the ACK control bit is set.")
+    mylist.insert(END,
+                  "\t\t" + "Data Offset (a.k.a. Header Length) field (variable length) tells how many 32-bit words are contained in the TCP header.")
+    mylist.insert(END, "\t\t" + "Flags field (6 bits) contains the various flags:")
+    mylist.insert(END, "\t\t\t" + "-URG—Indicates that some urgent data has been placed.")
+    mylist.insert(END, "\t\t\t" + "-ACK—Indicates that acknowledgement number is valid.")
+    mylist.insert(END, "\t\t\t" + "-PSH—Indicates that data should be passed to the application as soon as possible.")
+    mylist.insert(END, "\t\t\t" + "-RST—Resets the connection.")
+    mylist.insert(END, "\t\t\t" + "-SYN—Synchronizes sequence numbers to initiate a connection.")
+    mylist.insert(END, "\t\t\t" + "-FIN—Means that the sender of the flag has finished sending data.")
+    mylist.insert(END, "\t\t\t" + "-Data field (variable length) contains upper-layer information.")
 
     mylist.insert(END, "TTL Explanation: ")
+    mylist.itemconfigure(END, bg="cyan2", fg="black")
     mylist.insert(END, "\t" + "0 is restricted to the same host")
     mylist.insert(END, "\t" + "1 is restricted to the same subnet")
     mylist.insert(END, "\t" + "32 is restricted to the same site")
@@ -436,6 +470,7 @@ def stopCapture():
 def startCapture():
     connectionCreation['state'] = 'disabled'
     captureStop['state'] = 'normal'
+
     global captureTracker
     captureTracker = TRUE
     global filter_tracker
@@ -455,11 +490,7 @@ def startCapture():
         # packetwindow.geometry("1000x800")
         # packetwindow.title("Captruing on........")
         #
-        scrollbar = Scrollbar(root)
-        scrollbar.pack(side=RIGHT, fill=Y)
-
-        mylist = Listbox(root, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
-                         font='Times', bg=helpwindowColor, fg="white")
+        mylist.delete(0, END)
 
         while TRUE:
             if captureTracker == FALSE:
@@ -467,6 +498,7 @@ def startCapture():
             cou = cou + 1
             global ethernetPacketCount
             ethernetPacketCount = ethernetPacketCount + 1
+            countnumberlevel.config(text=str(cou))
             raw_data, addr = conn.recvfrom(65536)
             dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
             # mylist.insert(END, "Ethernet Frame: {}, {},{}".format(cou, dest_mac, src_mac))
@@ -522,6 +554,12 @@ def startCapture():
                     icmpPacketCount = icmpPacketCount + 1
                     icmp_type, code, checksum, data = icmp_packet(data)
                     mylist.itemconfigure(END, fg="blue")
+
+                    icmp_type_list.append(icmp_type)
+                    icmp_code_list.append(code)
+                    icmp_checksum_list.append(checksum)
+                    icmp_data_list.append(str(format_output_line(DATA_TAB_3, data)))
+
                     mylist.insert(END, TAB_1 + 'ICMP Packet:')
                     mylist.insert(END, TAB_2 + 'Type: {}, Code: {}, Checksum: {},'.format(icmp_type, code, checksum))
                     mylist.insert(END, TAB_2 + 'ICMP Data: ' + str(format_output_line(DATA_TAB_3, data)))
@@ -612,13 +650,14 @@ def startCapture():
                         TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port, dest_port, length))
 
                 # Other IPv4
-                elif filter_tracker == 'OTHERS':
+                elif filter_tracker == 'OTHERS' and proto!=1 and proto!=17 and proto!=6:
                     global othersPacketCount
                     othersPacketCount = othersPacketCount + 1
                     mylist.insert(END, TAB_1 + 'Other IPv4 Data:')
                     mylist.itemconfigure(END, fg=otherdatapacketcolor)
                     mylist.insert(END, format_output_line(DATA_TAB_2, data))
                     mylist.itemconfigure(END, fg=otherdatapacketcolor)
+                    others_data_list.append(format_output_line(DATA_TAB_2, data))
                     print(TAB_1 + 'Other IPv4 Data:')
                     print(format_output_line(DATA_TAB_2, data))
                 # await stopCapture()
@@ -752,10 +791,14 @@ exitPhoto = PhotoImage(file="exit.png")
 exitButton = Button(topFrame, text="EXIT", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
 exitButton.pack(side=LEFT)
 
+countlevel = Label(topFrame, text="Packet Count", fg="black")
+countlevel.pack()
+countnumberlevel = Label(topFrame, fg="black")
+countnumberlevel.pack()
+
 exitButton.config(height=30, width=80)
 helpButton.config(height=30, width=80)
 aboutButton.config(height=30, width=80)
-
 connectionCreation.config(height=30, width=80)
 captureStart.config(height=30, width=80)
 captureStop.config(height=30, width=80)
