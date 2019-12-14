@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import tkinter
 from email.policy import HTTP
 import asyncio
@@ -20,7 +22,7 @@ import itertools
 from itertools import zip_longest
 import matplotlib.pyplot as plt
 import numpy as np
-from _datetime import datetime
+from datetime import datetime
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -108,6 +110,10 @@ scrollbar.pack(side=RIGHT, fill=Y)
 mylist = Listbox(root, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
                  font='Times', bg=helpwindowColor, fg="white")
 
+captureStartTime = 0
+captureEndTime = 0
+duration = 0
+
 
 def detectInterface():
     for timeout in [5]:
@@ -175,11 +181,11 @@ def savePacket():
         k_udp = 0
         l_icmp = 0
         m_others = 0
-        wf.write("                                                   Report On Captured Data {}{}{}{}{}".format("(",
-                                                                                                                "Captured Time: ",
-                                                                                                                current_time,
-                                                                                                                ")",
-                                                                                                                "\n\n"))
+        wf.write("                                                   Captured Packet Information {}{}{}{}{}".format("(",
+                                                                                                                    "Captured Time: ",
+                                                                                                                    current_time,
+                                                                                                                    ")",
+                                                                                                                    "\n\n"))
 
         for line in range(ethernetPacketCount):
             wf.write(
@@ -226,12 +232,15 @@ def savePacket():
                     k_udp = k_udp + 1
 
                 elif ipv4_protocol[i_ipv4] == 1 and (filter_tracker == 'NONE' or filter_tracker == 'ICMP'):
-                    wf.write("{}ICMP Packet:{}{}Type: {}, Code: {}, Checksum: {}{}{}".format(TAB_1, "\n",
-                                        TAB_2,icmp_type_list[l_icmp],icmp_code_list[l_icmp],
-                                        icmp_checksum_list[l_icmp],"\n",TAB_2))
+                    wf.write("{}ICMP Packet:{}{}Type: {}, Code: {}, Checksum: {}{}{}{}".format(TAB_1, "\n",
+                                                                                               TAB_2,
+                                                                                               icmp_type_list[l_icmp],
+                                                                                               icmp_code_list[l_icmp],
+                                                                                               icmp_checksum_list[
+                                                                                                   l_icmp],
+                                                                                               "\n", TAB_2, "\n"))
 
                     l_icmp = l_icmp + 1
-
 
                 # elif filter_tracker == 'OTHERS' and ipv4_protocol[i_ipv4]!=1 and ipv4_protocol[i_ipv4]!=17 and ipv4_protocol[i_ipv4]!=6:
                 #     wf.write("{}Other IPv4 Data:{}{}{}".format(TAB_1, "\n", TAB_2,others_data_list[m_others]))
@@ -239,7 +248,7 @@ def savePacket():
                 #     m_others = m_others + 1
 
                 i_ipv4 = i_ipv4 + 1
-
+    messagebox.showinfo("SAVE", "Saved successfully!")
     #     pdf = FPDF()
     #     pdf.add_page()
     #     pdf.set_font('Times', 'B', 16)
@@ -254,7 +263,7 @@ def savePacket():
 
 def generateReport():
     if tracker == TRUE:
-        filename = filedialog.asksaveasfilename(initialdir="/home/ssnmt", title="Select file",
+        filename = filedialog.asksaveasfilename(initialdir="/home/ssnmt/PycharmProjects/", title="Select file",
                                                 filetypes=(("pdf files", "*.pdf"), ("all files", "*.*")))
         if filename:
             filename = filename
@@ -262,9 +271,21 @@ def generateReport():
             messagebox.showerror("Error", "Select File Name First! ")
         pdf = FPDF()
         pdf.add_page()
-        pdf.image('iit1.png', 10, 8, 33)
-        pdf.set_font('Arial', 'B', 15)
-        pdf.cell(200, 10, txt="Capture Packet Information", ln=1, align="C")
+        pdf.set_font('Times', 'B', 15)
+        pdf.cell(200, 10, txt="Report on Captured Packet", ln=1, align="C")
+
+        pdf.set_font('Times', '', 12)
+        pdf.cell(0, 10, 'Toal Number of Captured Packet: ' + str(ethernetPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total Ethernet Frame: ' + str(ethernetPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total IPv4 Packet: ' + str(ipv4PacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total UDP Segment: ' + str(udpPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total TCP Segment: ' + str(tcpPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total ICMP Segment:' + str(icmpPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total OTHERS Segment:' + str(othersPacketCount), 0, 1)
+        pdf.cell(0, 10, 'Total Number of Non-IPv4 Packet: ' + str(ethernetPacketCount - ipv4PacketCount), 0, 1)
+        pdf.cell(0, 10, 'Capture Start Time:' + str(captureStartTime), 0, 1)
+        pdf.cell(0, 10, 'Capture Stop Time: ' + str(captureEndTime), 0, 1)
+
         pdf.output(filename, 'F')
         print("Report generated!!!!!!!!!!")
         messagebox.showinfo("Report", "Report generated successfully")
@@ -460,6 +481,9 @@ def threaded_run():
 
 
 def stopCapture():
+    global captureEndTime
+    now = datetime.now()
+    captureEndTime = now.strftime("%H:%M:%S")
     global captureTracker
     global t
     captureTracker = FALSE
@@ -491,7 +515,9 @@ def startCapture():
         # packetwindow.title("Captruing on........")
         #
         mylist.delete(0, END)
-
+        global captureStartTime
+        now = datetime.now()
+        captureStartTime = now.strftime("%H:%M:%S")
         while TRUE:
             if captureTracker == FALSE:
                 break
@@ -650,7 +676,8 @@ def startCapture():
                         TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(src_port, dest_port, length))
 
                 # Other IPv4
-                elif filter_tracker == 'OTHERS' and proto!=1 and proto!=17 and proto!=6:
+                elif (
+                        filter_tracker == 'OTHERS' or filter_tracker == 'NONE') and proto != 1 and proto != 17 and proto != 6:
                     global othersPacketCount
                     othersPacketCount = othersPacketCount + 1
                     mylist.insert(END, TAB_1 + 'Other IPv4 Data:')
@@ -661,8 +688,8 @@ def startCapture():
                     print(TAB_1 + 'Other IPv4 Data:')
                     print(format_output_line(DATA_TAB_2, data))
                 # await stopCapture()
-            elif eth_proto == 806:
-                print("Found ARP packet..........")
+                # elif eth_proto == 806:
+                #    print("Found ARP packet..........")
             else:
                 mylist.insert(END, 'Ethernet Data:')
                 mylist.insert(END, format_output_line(DATA_TAB_1, data))
@@ -775,7 +802,7 @@ saveFile.pack(side=LEFT)
 
 reportPhoto = PhotoImage(file="report.png")
 
-reportGenerate = Button(topFrame, text="REPORT", fg="#3c6160", image=reportPhoto, compound=LEFT, command=graphGenerate)
+reportGenerate = Button(topFrame, text="REPORT", fg="#3c6160", image=reportPhoto, compound=LEFT, command=generateReport)
 reportGenerate['state'] = 'disabled'
 reportGenerate.pack(side=LEFT)
 
@@ -795,6 +822,26 @@ countlevel = Label(topFrame, text="Packet Count", fg="black")
 countlevel.pack()
 countnumberlevel = Label(topFrame, fg="black")
 countnumberlevel.pack()
+
+
+def update_list():
+    search_term = search_var.get()
+    print(search_term)
+
+    # Just a generic list to populate the listbox
+    #lbox_list = ['10:100:10:12 TCP', 'AD:BC:BD:BD:BD:BD', 'Barry', 'Bob',
+    #             'James', 'Frank', 'Susan', 'Amanda', 'Christie']
+
+    #self.lbox.delete(0, END)
+
+
+search_var = StringVar()
+search_var.trace("w", lambda name, index, mode: update_list())
+searchlevel = Label(topFrame, text="Search:", fg="black")
+searchlevel.pack(side=LEFT)
+entry = Entry(topFrame, textvariable=search_var, width=25)
+entry.pack(side=LEFT)
+update_list()
 
 exitButton.config(height=30, width=80)
 helpButton.config(height=30, width=80)
