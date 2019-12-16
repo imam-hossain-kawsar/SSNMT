@@ -1,0 +1,397 @@
+                                                   Captured Packet Information (Captured Time: 19:53:35)
+
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 1
+	 - MAC(destination): FF:FF:FF:FF:FF:FF, MAC(source): 00:0A:F5:CA:A8:34, Port: 1544
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 2
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 74.125.24.91
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 311
+			 - RST: 51014, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 3
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 119
+			 - protocol: 6, Source: 74.125.24.91, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17792, PSH: 52
+			 - RST: 29905, SYN: 0, FIN: 30470
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 4
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 119
+			 - protocol: 6, Source: 74.125.24.91, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17792, PSH: 302
+			 - RST: 29918, SYN: 0, FIN: 30470
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 5
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 119
+			 - protocol: 6, Source: 74.125.24.91, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17792, PSH: 153
+			 - RST: 29919, SYN: 0, FIN: 30470
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 6
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 74.125.24.91
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 52
+			 - RST: 51015, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 7
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 119
+			 - protocol: 6, Source: 74.125.24.91, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17792, PSH: 171
+			 - RST: 29920, SYN: 0, FIN: 30470
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 8
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 55536, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 9
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 55536, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 10
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 55536, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 11
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 55536, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 12
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 10.100.100.220, Target: 103.221.252.60
+	 - UDP Segment:
+		 - Source Port: 40844, Destination Port: 53 Length: 52146
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 13
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 10.100.100.220, Target: 103.221.252.60
+	 - UDP Segment:
+		 - Source Port: 52832, Destination Port: 53 Length: 49383
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 14
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 56195, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 15
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.1, Target: 127.0.0.53
+	 - UDP Segment:
+		 - Source Port: 56195, Destination Port: 53 Length: 65168
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 16
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 59
+			 - protocol: 17, Source: 103.221.252.60, Target: 10.100.100.220
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 40844 Length: 63483
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 17
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 59
+			 - protocol: 17, Source: 103.221.252.60, Target: 10.100.100.220
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 52832 Length: 43505
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 18
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 56195 Length: 65217
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 19
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 56195 Length: 65217
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 20
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 55536 Length: 65217
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 21
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 55536 Length: 65217
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 22
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 103.57.40.140
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 60
+			 - RST: 33962, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 23
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 10.100.100.220, Target: 103.221.252.60
+	 - UDP Segment:
+		 - Source Port: 42088, Destination Port: 53 Length: 7822
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 24
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 103.57.40.140
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 60
+			 - RST: 45437, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 25
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 59
+			 - protocol: 17, Source: 103.221.252.60, Target: 10.100.100.220
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 42088 Length: 33175
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 26
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 55536 Length: 65201
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 27
+	 - MAC(destination): 00:00:00:00:00:00, MAC(source): 00:00:00:00:00:00, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 17, Source: 127.0.0.53, Target: 127.0.0.1
+	 - UDP Segment:
+		 - Source Port: 53, Destination Port: 55536 Length: 65201
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 28
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 117
+			 - protocol: 6, Source: 103.57.40.140, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 60
+			 - RST: 48172, SYN: 0, FIN: 29958
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 29
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 103.57.40.140
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 52
+			 - RST: 45438, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 30
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 117
+			 - protocol: 6, Source: 103.57.40.140, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 60
+			 - RST: 48173, SYN: 0, FIN: 29958
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 31
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 103.57.40.140
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 52
+			 - RST: 33963, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 32
+	 - MAC(destination): 6C:3B:6B:C7:55:DD, MAC(source): F4:8E:38:80:44:48, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 64
+			 - protocol: 6, Source: 10.100.100.220, Target: 103.57.40.140
+	 - TCP Segment:
+		 - Source Port: 27707, Destination Port: 27591
+		 -  Sequence: 1440609422, Acknowledgment: 947930184
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 607
+			 - RST: 45439, SYN: 16384, FIN: 16390
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 33
+	 - MAC(destination): F4:8E:38:80:44:48, MAC(source): 6C:3B:6B:C7:55:DD, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 117
+			 - protocol: 6, Source: 103.57.40.140, Target: 10.100.100.220
+	 - TCP Segment:
+		 - Source Port: 62606, Destination Port: 14464
+		 -  Sequence: 1145596987, Acknowledgment: 1808225757
+		 - Flags:
+			 - URG: 2048, ACK: 17664, PSH: 52
+			 - RST: 48176, SYN: 0, FIN: 29958
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 34
+	 - MAC(destination): FF:FF:FF:FF:FF:FF, MAC(source): 6C:3B:6B:C7:55:DD, Port: 1544
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 35
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.101.62, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 43529
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 36
+	 - MAC(destination): 33:33:00:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 56710
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 37
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 4C:49:E3:BE:D9:F7, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.100.156, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 20779
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 38
+	 - MAC(destination): 33:33:00:00:00:FB, MAC(source): 4C:49:E3:BE:D9:F7, Port: 56710
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 39
+	 - MAC(destination): FF:FF:FF:FF:FF:FF, MAC(source): F4:8E:38:81:B8:6C, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 128
+			 - protocol: 17, Source: 10.100.100.205, Target: 10.100.103.255
+	 - UDP Segment:
+		 - Source Port: 137, Destination Port: 137 Length: 56209
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 40
+	 - MAC(destination): FF:FF:FF:FF:FF:FF, MAC(source): 6C:3B:6B:C7:55:DD, Port: 1544
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 41
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.101.62, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 43785
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 42
+	 - MAC(destination): 33:33:00:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 56710
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 43
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.101.62, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 31443
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 44
+	 - MAC(destination): 33:33:00:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 56710
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 45
+	 - MAC(destination): FF:FF:FF:FF:FF:FF, MAC(source): 6C:3B:6B:C7:55:DD, Port: 1544
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 46
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.101.62, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 31699
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 47
+	 - MAC(destination): 33:33:00:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 56710
+-----------------------------------------------------------------------------------------------
+Ethernet Frame: 48
+	 - MAC(destination): 01:00:5E:00:00:FB, MAC(source): 20:A6:0C:3A:2A:65, Port: 8
+	 - IPV4 Packet:
+		 - Version: 4, Header Length: 20, TTL: 255
+			 - protocol: 17, Source: 10.100.101.62, Target: 224.0.0.251
+	 - UDP Segment:
+		 - Source Port: 5353, Destination Port: 5353 Length: 31699

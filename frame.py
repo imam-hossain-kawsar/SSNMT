@@ -16,10 +16,6 @@ import time
 from threading import Thread
 from tkinter import filedialog
 from PIL import ImageTk, Image
-from tksheet import Sheet
-from searchbox import SearchBox
-import itertools
-from itertools import zip_longest
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
@@ -106,9 +102,12 @@ icmpPacketCount = 0
 othersPacketCount = 0
 
 scrollbar = Scrollbar(root)
-scrollbar.pack(side=RIGHT, fill=Y)
+scrollbar.pack(side=RIGHT, fill=BOTH)
 mylist = Listbox(root, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
                  font='Times', bg=helpwindowColor, fg="white")
+
+mysearchlist = Listbox(root, yscrollcommand=scrollbar.set, width=700, xscrollcommand=scrollbar.set,
+                       font='Times', bg=helpwindowColor, fg="white")
 
 captureStartTime = 0
 captureEndTime = 0
@@ -249,6 +248,36 @@ def savePacket():
 
                 i_ipv4 = i_ipv4 + 1
     messagebox.showinfo("SAVE", "Saved successfully!")
+
+    # ipv4_target_address.clear()
+    # ipv4_source_address.clear()
+    # ipv4_protocol.clear()
+    # ipv4_ttl.clear()
+    # ipv4_version.clear()
+    # ipv4_header.clear()
+    #
+    # tcp_source_port.clear()
+    # tcp_destination_port.clear()
+    # tcp_sequence.clear()
+    # tcp_acknowledgment.clear()
+    # tcp_URG.clear()
+    # tcp_ACK.clear()
+    # tcp_PSH.clear()
+    # tcp_RST.clear()
+    # tcp_SYN.clear()
+    # tcp_FIN.clear()
+    #
+    #
+    # udp_destination_port.clear()
+    # udp_source_port.clear()
+    # udp_length.clear()
+    #
+    # icmp_type_list.clear()
+    # icmp_code_list.clear()
+    # icmp_checksum_list.clear()
+    # icmp_data_list.clear()
+    #
+    # others_data_list.clear()
     #     pdf = FPDF()
     #     pdf.add_page()
     #     pdf.set_font('Times', 'B', 16)
@@ -285,6 +314,31 @@ def generateReport():
         pdf.cell(0, 10, 'Total Number of Non-IPv4 Packet: ' + str(ethernetPacketCount - ipv4PacketCount), 0, 1)
         pdf.cell(0, 10, 'Capture Start Time:' + str(captureStartTime), 0, 1)
         pdf.cell(0, 10, 'Capture Stop Time: ' + str(captureEndTime), 0, 1)
+        pdf.cell(0, 10, '', 0, 1)
+
+        ip_address = ipv4_source_address
+        ip_address.extend(ipv4_target_address)
+        unique_ip = set(ip_address)
+        unique_ip = list(unique_ip)
+
+        pdf.set_font('Times', 'B', 13)
+        pdf.cell(0, 10, 'Unique IP List: ' + str(len(unique_ip)), 0, 1)
+        for i in unique_ip:
+            pdf.set_font('Times', '',12)
+            pdf.cell(0, 10, str(i), 0, 1)
+
+        pdf.cell(0, 10, '', 0, 1)
+
+        mac_address = ethernet_source_MAC_address
+        mac_address.extend(ethernet_destination_MAC_address)
+        unique_mac = set(mac_address)
+        unique_mac = list(unique_mac)
+        pdf.set_font('Times', 'B', 13)
+        pdf.cell(0, 10, 'Unique MAC List: '+ str(len(unique_mac)), 0, 1)
+
+        for i in unique_mac:
+            pdf.set_font('Times','' ,12)
+            pdf.cell(0, 10, str(i), 0, 1)
 
         pdf.output(filename, 'F')
         print("Report generated!!!!!!!!!!")
@@ -492,6 +546,7 @@ def stopCapture():
 
 
 def startCapture():
+
     connectionCreation['state'] = 'disabled'
     captureStop['state'] = 'normal'
 
@@ -518,6 +573,7 @@ def startCapture():
         global captureStartTime
         now = datetime.now()
         captureStartTime = now.strftime("%H:%M:%S")
+
         while TRUE:
             if captureTracker == FALSE:
                 break
@@ -527,15 +583,9 @@ def startCapture():
             countnumberlevel.config(text=str(cou))
             raw_data, addr = conn.recvfrom(65536)
             dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
-            # mylist.insert(END, "Ethernet Frame: {}, {},{}".format(cou, dest_mac, src_mac))
-
-            # for line in range(100):
-            #     mylist.insert(END, "Ethernet Frame:{} ".format(cou))
-
-            # mylist.pack(side=LEFT, fill=BOTH)
-            # scrollbar.config(command=mylist.yview)
 
             print('\n Ethernet Frame: ' + str(cou))
+
             ethernet_destination_MAC_address.append(dest_mac)
             ethernet_source_MAC_address.append(src_mac)
             ethernet_protocol_address.append(eth_proto)
@@ -780,41 +830,41 @@ variable.set(OPTIONS[0])
 w = OptionMenu(topFrame, variable, *OPTIONS)
 w.pack(side=LEFT)
 
-connectionPhoto = PhotoImage(file="connection.png")
+connectionPhoto = PhotoImage(file="resources/connection.png")
 connectionCreation = Button(topFrame, text="CONNECT", image=connectionPhoto, compound=LEFT, fg="#3c6160",
                             command=detectInterface)
 connectionCreation.pack(side=LEFT)
 
-startphoto = PhotoImage(file="start.png")
+startphoto = PhotoImage(file="resources/start.png")
 captureStart = Button(topFrame, text="START", image=startphoto, compound=LEFT, fg="#3c6160", command=threaded_run)
 captureStart['state'] = 'disabled'
 captureStart.pack(side=LEFT)
 
-stopPhoto = PhotoImage(file="finish.png")
+stopPhoto = PhotoImage(file="resources/finish.png")
 captureStop = Button(topFrame, text="STOP", image=stopPhoto, compound=LEFT, fg="#3c6160", command=stopCapture)
 captureStop['state'] = 'disabled'
 captureStop.pack(side=LEFT)
 
-savePhoto = PhotoImage(file="save.png")
+savePhoto = PhotoImage(file="resources/save.png")
 saveFile = Button(topFrame, text="SAVE", image=savePhoto, compound=LEFT, fg="#3c6160", command=savePacket)
 saveFile['state'] = 'disabled'
 saveFile.pack(side=LEFT)
 
-reportPhoto = PhotoImage(file="report.png")
+reportPhoto = PhotoImage(file="resources/report.png")
 
 reportGenerate = Button(topFrame, text="REPORT", fg="#3c6160", image=reportPhoto, compound=LEFT, command=generateReport)
 reportGenerate['state'] = 'disabled'
 reportGenerate.pack(side=LEFT)
 
-helpPhoto = PhotoImage(file="help.png")
+helpPhoto = PhotoImage(file="resources/help.png")
 helpButton = Button(topFrame, text="HELP", image=helpPhoto, compound=LEFT, fg="#3c6160", command=helpCLick)
 helpButton.pack(side=LEFT)
 
-aboutPhoto = PhotoImage(file="about.png")
+aboutPhoto = PhotoImage(file="resources/about.png")
 aboutButton = Button(topFrame, text="ABOUT", image=aboutPhoto, compound=LEFT, fg="#3c6160", command=clickAbout)
 aboutButton.pack(side=LEFT)
 
-exitPhoto = PhotoImage(file="exit.png")
+exitPhoto = PhotoImage(file="resources/exit.png")
 exitButton = Button(topFrame, text="EXIT", image=exitPhoto, compound=LEFT, fg="#3c6160", command=root.destroy)
 exitButton.pack(side=LEFT)
 
@@ -823,16 +873,70 @@ countlevel.pack()
 countnumberlevel = Label(topFrame, fg="black")
 countnumberlevel.pack()
 
+windowcount = 0
+
+
+# def searchwindowcreation():
+#     searchwindow = Toplevel(root)
+#     searchwindow["bg"] = helpwindowColor
+#     searchwindow.geometry("400x300")
+#     searchwindow.title("Search Result")
+#
+#     label = Label(searchwindow, text="Search Result\n", bg=helpwindowColor, fg="white")
+#     label.config(font=("Times", 16, "bold"))
+#     label.pack()
+#
+#     scrollbar = Scrollbar(searchwindow)
+#     scrollbar.pack(side=RIGHT, fill=Y)
+#     return searchwindow
+#
+#
+# searchwindow = searchwindowcreation()
+# searchlist = Listbox(searchwindow, yscrollcommand=scrollbar.set, width=300, xscrollcommand=scrollbar.set,
+#                      font='Times', bg=helpwindowColor, fg="white")
 
 def update_list():
+    global windowcount
+    total_ip_address = []
+    total_ip_address = ipv4_source_address
+    total_ip_address.extend(ipv4_target_address)
+    total_ip_address.extend(ethernet_source_MAC_address)
+    total_ip_address.extend(ethernet_destination_MAC_address)
+
     search_term = search_var.get()
-    print(search_term)
 
-    # Just a generic list to populate the listbox
-    #lbox_list = ['10:100:10:12 TCP', 'AD:BC:BD:BD:BD:BD', 'Barry', 'Bob',
-    #             'James', 'Frank', 'Susan', 'Amanda', 'Christie']
+    mylist.delete(0, END)
+    for item in total_ip_address:
+        if search_term.lower() in item.lower():
+            print(item)
+            mylist.insert(END, item)
+            mylist.itemconfigure(END, fg=tcpdatapacketcolor)
 
-    #self.lbox.delete(0, END)
+    #
+    #
+    # if windowcount == 1:
+    #     searchlist = Listbox(searchwindow, yscrollcommand=scrollbar.set, width=400, xscrollcommand=scrollbar.set,
+    #                          font='Times', bg=helpwindowColor, fg="white")
+    #     search_term = search_var.get()
+    #     searchlist.delete(0, END)
+    #     for item in total_ip_address:
+    #         if search_term.lower() in item.lower():
+    #             searchlist.insert(END, item)
+    #             searchlist.itemconfigure(END, fg=tcpdatapacketcolor)
+    #
+    # elif windowcount>1:
+    #     searchlist = Listbox(searchwindow, yscrollcommand=scrollbar.set, width=400, xscrollcommand=scrollbar.set,
+    #                          font='Times', bg=helpwindowColor, fg="white")
+    #     search_term = search_var.get()
+    #     searchlist.delete(0, END)
+    #     for item in total_ip_address:
+    #         if search_term.lower() in item.lower():
+    #             searchlist.insert(END, item)
+    #             searchlist.itemconfigure(END, fg=tcpdatapacketcolor)
+    #     print()
+    #
+    # else:
+    #     windowcount = windowcount + 1
 
 
 search_var = StringVar()
